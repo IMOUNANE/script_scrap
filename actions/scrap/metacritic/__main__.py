@@ -34,7 +34,7 @@ def scrape_and_save_data(source, base_url, num_iterations,limit):
             filtered_items = [{key: item[key] for key in keys_to_keep} for item in items_list]
 
             filtered_items = [
-                {**{key: item[key] for key in keys_to_keep}, "lang": detect_language(item["quote"]),"origin":source} 
+                {**{key: item[key] for key in keys_to_keep}, "lang": detect_language(item["quote"]),"source":source} 
                 for item in items_list
             ]
 
