@@ -1,8 +1,9 @@
+
 import requests
 import json
 from bs4 import BeautifulSoup
 
-def scrape_reviews(url):
+def scrape_reviews(source,url):
     response = requests.get(url)
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -18,9 +19,10 @@ def scrape_reviews(url):
             text_element = card.find('div', class_='review-card__text')
             review['text'] = text_element.get_text(strip=True) if text_element else ""
             
-            date_element = card.find(class_='review-card__user-info')
             date_elementdate = author_element.find(class_='review-card__date')
             review['date'] = date_elementdate.get_text(strip=True) if text_element else ""
+            
+            review['source']=source
             
             reviews.append(review)
         return reviews
@@ -29,11 +31,8 @@ def scrape_reviews(url):
 
 url = "https://rawg.io/games/the-legend-of-zelda-breath-of-the-wild-sequel"
 
-reviews = scrape_reviews(url)
-
-# Enregistrement des avis dans un fichier JSON
-output_file = "reviews.json"
-with open(output_file, 'w', encoding='utf-8') as f:
-    json.dump(reviews, f, ensure_ascii=False, indent=4)
-
-print(f"Les avis ont été enregistrés dans {output_file}.")
+def main(params):
+    dataset_metacritic=params.get('dataset_metacritic',0)
+    reviews = scrape_reviews("rawg",url)
+    dataset_rawg= json.dumps(reviews)
+    return {"dataset_rawg":dataset_rawg,"dataset_rawg":dataset_metacritic}
